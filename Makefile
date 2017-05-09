@@ -3,9 +3,9 @@ CC+=-DDEBUG -g
 CFLAGS=-c -Wall -m64
 LDFLAGS=-fPIC
 DIR_SRC = ./src
-SOURCES=WFU.C $(wildcard $(DIR_SRC)/*.C)
+SOURCES=Example.C $(wildcard $(DIR_SRC)/*.C)
 OBJECTS=$(SOURCES:.C=.o)
-EXECUTABLE=WFU
+EXECUTABLE=Example
 
 CFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags)
 LDFLAGS += $(shell $(ROOTSYS)/bin/root-config --libs) 

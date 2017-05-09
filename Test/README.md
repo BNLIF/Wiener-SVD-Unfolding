@@ -1,5 +1,5 @@
 Test files. All in histogram format.  
-Directly used for WFU.C in main directory.  
+Directly used for Example.C in main directory.  
 
 
 Test.root: square response matrix.  

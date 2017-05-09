@@ -7,12 +7,12 @@ Core algorithms implementation in src/
 Header files in include/  
 Use Makefile to build excutables.  
 
-An example of application in WFU.C  
-Input file for WFU.C in Test/  
+An example of application in Example.C  
+Input file for Example.C in Test/  
 Usage:  
 make clean;  
 make;  
-WFU Test/Test.root output.root 2  
+Example Test/Test.root output.root 2  
 
 
 INSTRUCTION
