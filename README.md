@@ -1,4 +1,4 @@
-Implementaion of SVD unfolding using Wiener Filter  
+Implementaion of Wiener-SVD unfolding    
 Reference: [to be added]  
 Version 2.0  
 
@@ -25,7 +25,7 @@ Input:
 5. Choice of addional matrix for smoothness, e.g. 2nd derivative matrix.  
 
 Important notes:
-1. All input in mathematical format (matrix, vector) for Wiener filter SVD. However, tools are provided to convert histogram/matrix to matrix/histogram. 
+1. All input in mathematical format (matrix, vector) for Wiener-SVD. However, tools are provided to convert histogram/matrix to matrix/histogram. 
 2. Need a choice of addtional matrix in unfolding for smoothness, e.g. 2nd derivative matrix (recommended). An infinitesimal value is possibly needed to add on the diagonal elements and makes the matrix inversible.
 3. Current version can handle non-square matrix (only number of rows greater or equal to number of columns is inversible/solvable).
 4. Be careful about histogram x/y-axis meaning after coversion. Two options: hist(i+1, j+1) = matrix(i, j) or hist(i+1, j+1)=matrix(j, i). No units considered in the mutual coversion, to be customized by users in the definiation of histograms.

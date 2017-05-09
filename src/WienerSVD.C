@@ -1,8 +1,8 @@
-// Core implementation of Wiener filter SVD
+// Core implementation of Wiener-SVD
 // Author: Hanyu WEI,   March 17, 2017
 // Version 1.0
 
-#include "WFUnfold.h"
+#include "WienerSVD.h"
 #include "TMatrixD.h"
 #include "TDecompSVD.h"
 #include <iostream>
@@ -98,7 +98,7 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
 
 
 
-TVectorD WFUnfold(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, TMatrixD& AddSmear, TVectorD& WF)
+TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, TMatrixD& AddSmear, TVectorD& WF)
 {
     Int_t m = Response.GetNrows(); // measure, M
     Int_t n = Response.GetNcols(); // signal, S

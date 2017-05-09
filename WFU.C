@@ -1,4 +1,4 @@
-// Example of SVD unfolding with Wiener Filter
+// Example of Wiener-SVD unfolding
 // Reference: [to be added]
 // Author: Hanyu WEI    March 17, 2017
 
@@ -20,7 +20,7 @@
 #include "TStyle.h"
 #include "TLegend.h"
 
-#include "WFUnfold.h" //core implementation of Wiener Filter SVD
+#include "WienerSVD.h" //core implementation of Wiener-SVD
 #include "Util.h" // utilities
 
 using namespace std;
@@ -88,9 +88,9 @@ int main(int argc, char** argv)
 
 
 
-    // Core implementation of Wiener-Filter SVD
+    // Core implementation of Wiener-SVD
     // Input as names read. AddSmear and WF to record the core information in the unfolding.
-    TVectorD unfold = WFUnfold(response, signal, measure, covariance, C_type, AddSmear, WF);
+    TVectorD unfold = WienerSVD(response, signal, measure, covariance, C_type, AddSmear, WF);
 
 
     // output and comparison between true/expected signal spectrum with unfolded one
