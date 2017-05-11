@@ -1,5 +1,5 @@
 Implementaion of Wiener-SVD unfolding    
-Reference: [arXiv:1705.03568](https://arxiv.org/abs/1705.03568)]  
+Reference: \[arXiv:1705.03568](https://arxiv.org/abs/1705.03568)]  
 Version 2.0  
 
 Pre-requiste of ROOT installed, some ROOT classes (e.g. TMatrix) will be used.  
