@@ -1,6 +1,6 @@
 // Core implementation of Wiener-SVD
 // Author: Hanyu WEI,   March 17, 2017
-// Version 1.0
+// Version 2.0
 
 #include "WienerSVD.h"
 #include "TMatrixD.h"
