@@ -115,7 +115,7 @@ void H2M(const TH2D* histo, TMatrixD& mat, bool rowcolumn)
         for(Int_t j=0; j<histo->GetNbinsY(); j++)
         {
             if(rowcolumn) mat(i, j) = histo->GetBinContent(i+1, j+1);
-            else mat(i, j) = histo->GetBinContent(j+1, i+1);
+            else mat(j, i) = histo->GetBinContent(i+1, j+1);
         }
     }
 }
