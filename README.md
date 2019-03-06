@@ -20,7 +20,7 @@ INSTRUCTION
 Input: 
 1. true/expected signal spectrum (in reality predicted by models); 
 2. measured spectrum; 
-3. covariance matrix of measured spectrum; 
+3. covariance matrix of the uncertainty of the measured spectrum; 
 4. response matrix from signal (corresponding to matrix column) to measurement (corresponding to matrix row), M = R*S, column normalized (pdf);
 5. Choice of addional matrix for smoothness, e.g. 2nd derivative matrix.  
 
