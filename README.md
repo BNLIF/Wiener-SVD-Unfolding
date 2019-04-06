@@ -1,35 +1,52 @@
 Implementaion of Wiener-SVD unfolding    
-Reference: \[arXiv:1705.03568](https://arxiv.org/abs/1705.03568)  
-Version 2.0  
+Reference: 	JINST, 12, P10002 (2017) \[arXiv:1705.03568](https://arxiv.org/abs/1705.03568)  
 
-Pre-requiste of ROOT installed, some ROOT classes (e.g. TMatrix) will be used.  
+Pre-requiste: ROOT, some ROOT classes (e.g. TMatrix) will be used.  
 Core algorithms implementation in src/  
 Header files in include/  
-Use Makefile to build excutables.  
-
-An example of application in Example.C  
-Input file for Example.C in Test/  
-Usage:  
-make clean;  
-make;  
-Example Test/Test.root output.root 2  
-
+Use Makefile to build executables.  
 
 INSTRUCTION
 
 Input: 
-1. true/expected signal spectrum (in reality predicted by models); 
+1. true/expected signal spectrum (models); 
 2. measured spectrum; 
 3. covariance matrix of the uncertainty of the measured spectrum; 
 4. response matrix from signal (corresponding to matrix column) to measurement (corresponding to matrix row), M = R*S, column normalized (pdf);
 5. Choice of addional matrix for smoothness, e.g. 2nd derivative matrix.  
+Output:
+1. Unfolded spectrum
+2. Additional smearing matrix
+3. Wiener filter
+4. Covariance matrix of the unfolded spectrum
 
-Important notes:
-1. All input in mathematical format (matrix, vector) for Wiener-SVD. However, tools are provided to convert histogram/matrix to matrix/histogram. 
+
+An example of application can be found in Example.C  
+Usage:  
+make clean;  
+make;  
+Example input.root output.root 2 
+
+* 2: 2nd-order derivative matrix
+* input.root:
+TH1D sig; expected signal
+TH1D Rmeasure; measured spectrum
+TH2D hcov; covariance matrix of measured spectrum uncertainty
+TH2D hresponse; Resposne matrix (X-axis: measured, each row (along Y-axis) should be normalized)
+* output.root
+TH1D unf; unfolded spectrum
+TH2D smear; additional smearing matrix, unfolded = smear*r^-1*m
+TH1D wiener; Wiener regularization
+TH1D bias; intrinsic bias, (smear - I)*s/s, s is sig in input.root
+TH1D fracError; fractional uncertainy (corresponding to diagonal elements of unfcov) of the unfolded spectrum
+TH2D unfcov; covariance matrix of the unfolded spectrum uncertainty
+
+Notes:
+1. All input in mathematical format (matrix, vector) for Wiener-SVD. However, tools are provided to convert histogram/matrix to matrix/histogram.  
 2. Need a choice of addtional matrix in unfolding for smoothness, e.g. 2nd derivative matrix (recommended). An infinitesimal value is possibly needed to add on the diagonal elements and makes the matrix inversible.
 3. Current version can handle non-square matrix (only number of rows greater or equal to number of columns is inversible/solvable).
 4. Be careful about histogram x/y-axis meaning after coversion. Two options: hist(i+1, j+1) = matrix(i, j) or hist(i+1, j+1)=matrix(j, i). No units considered in the mutual coversion, to be customized by users in the definiation of histograms.
-5. Output includes the addtional smearing matrix and wiener filter elements after unfolding (key information defined in reference [to be added]). Easy to perform an error propogation with it as well as other applications. 
+5. Output includes the addtional smearing matrix and wiener filter elements after unfolding. These are all info we need to know for this method. 
 
 More details:
 Please read the comments in the source files correspondingly.
