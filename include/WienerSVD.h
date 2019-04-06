@@ -13,7 +13,8 @@ TMatrixD Matrix_C(Int_t n, Int_t type);
 // first five parameters are inputs as names read
 // AddSmear is additional smearing matrix after unfolding
 // WF is the elements of Wiener Filter
-TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, TMatrixD& AddSmear, TVectorD& WF);
+// Covariance matrix of the unfolded spectrum
+TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, TMatrixD& AddSmear, TVectorD& WF, TMatrixD& UnfoldCov);
 
 #endif
 

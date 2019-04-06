@@ -60,8 +60,10 @@ int main(int argc, char** argv)
     TH2D* cov = (TH2D*)f->Get("hcov");
 
     Int_t n = sig->GetNbinsX();
-    Int_t sXmin = sig->GetXaxis()->GetXmin();
-    Int_t sXmax = sig->GetXaxis()->GetXmax();
+    Double_t Nuedges[n+1];
+    for(int i=0; i<n+1; i++){
+        Nuedges[i] = sig->GetBinLowEdge(i+1);
+    }
 
     Int_t m = mes->GetNbinsX();
 //    Int_t mXmin = mes->GetXaxis()->GetXmin();
@@ -83,15 +85,15 @@ int main(int argc, char** argv)
     // construct to record additinal smearing matrix and wiener filter (diagomal matrix) elements. 
     TMatrixD AddSmear(n,n);
     TVectorD WF(n);
-    TH2D* smear = new TH2D("smear","Additional Smearing Matirx",n,sXmin,sXmax,n,sXmin,sXmax);
-    TH1D* wiener = new TH1D("wiener","Wiener Filter Vector",n,sXmin,sXmax);
-
+    TMatrixD UnfoldCov(n,n);
+    TH2D* smear = new TH2D("smear","Additional Smearing Matirx",n,Nuedges,n,Nuedges);
+    TH1D* wiener = new TH1D("wiener","Wiener Filter Vector",n,0,n);
+    TH2D* unfcov = new TH2D("unfcov","Unfolded spectrum covariance", n, Nuedges, n, Nuedges);
 
 
     // Core implementation of Wiener-SVD
     // Input as names read. AddSmear and WF to record the core information in the unfolding.
-    TVectorD unfold = WienerSVD(response, signal, measure, covariance, C_type, AddSmear, WF);
-
+    TVectorD unfold = WienerSVD(response, signal, measure, covariance, C_type, AddSmear, WF, UnfoldCov);
 
     // output and comparison between true/expected signal spectrum with unfolded one
     TFile* file = new TFile(outputfile.c_str(), "RECREATE");
@@ -99,7 +101,7 @@ int main(int argc, char** argv)
     TCanvas *c = new TCanvas("c","",800,1000);
     c->Divide(1,2,0.0,0.0);
     c->cd(1);
-    TH1D* unf = new TH1D("unf","unfolded spectrum",n,sXmin,sXmax);
+    TH1D* unf = new TH1D("unf","unfolded spectrum",n,Nuedges);
     V2H(unfold, unf);
     unf->Draw();
     sig->Draw("same");
@@ -112,7 +114,7 @@ int main(int argc, char** argv)
     lg->SetTextSize(0.08);
     lg->Draw("same");
     c->cd(2);
-    TH1D* bias = new TH1D("bias","bias",n,sXmin,sXmax);
+    TH1D* diff = new TH1D("diff","Fractional difference of unf and signal model",n, Nuedges);
     for(Int_t i=1; i<=n; i++)
     {
         Double_t s2s = 0;
@@ -120,19 +122,53 @@ int main(int argc, char** argv)
         Double_t t = signal(i-1);
         if(t!=0) s2s = u/t - 1;
         else s2s = 1.; // attention to this t=0
-        bias->SetBinContent(i, 100.*s2s); // in percentage 
+        diff->SetBinContent(i, s2s); // in percentage 
     }
-    bias->Draw("");
-    bias->GetYaxis()->SetRangeUser(-20,20); //adjustable
-
+    diff->Draw("");
+   
+    // intrinsic bias (Ac-I)*s_bar formula
+    TH1D* bias = new TH1D("bias","intrinsic bias",n, Nuedges);
+    TMatrixD unit(n,n);
+    unit.UnitMatrix();
+    TVectorD intrinsicbias = (AddSmear - unit)*signal;
+    for(int i=0; i<n; i++)
+    {
+        if(signal(i)!=0) intrinsicbias(i) = intrinsicbias(i)/signal(i);
+        else intrinsicbias(i)=1.;
+    }
+    V2H(intrinsicbias, bias);
+    bias->Draw("same");
+    bias->SetLineColor(kRed);
+    TLegend* lg2 = new TLegend(0.4, 0.5, 0.6, 0.8,"","NDC");
+    lg2->AddEntry(diff,"Fractional difference of unfolded and sig model","lf");
+    lg2->AddEntry(bias,"Intrinsic bias","lf");
+    lg2->SetBorderSize(0);
+    lg2->SetTextSize(0.08);
+    lg2->Draw("same");
+    
+    
+    // diagonal uncertainty
+    TH1D* fracError = new TH1D("fracError", "Fractional uncertainty", n, Nuedges);
+    TH1D* absError = new TH1D("absError", "absolute uncertainty", n, Nuedges);
+    for(int i=1; i<=n; i++)
+    {
+        fracError->SetBinContent(i, TMath::Sqrt(UnfoldCov(i-1, i-1))/unfold(i-1));
+        absError->SetBinContent(i, TMath::Sqrt(UnfoldCov(i-1, i-1)));
+    }
+     
     // convert matrix/vector to histogram and save
     M2H(AddSmear, smear);
     V2H(WF, wiener);
+    M2H(UnfoldCov, unfcov);
 
     unf->Write();
     smear->Write();
     wiener->Write();
+    diff->Write();
     bias->Write();
+    fracError->Write();
+    absError->Write();
+    unfcov->Write();
     c->Write();
     file->Close();
 
