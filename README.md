@@ -14,6 +14,7 @@ Input:
 3. covariance matrix of the uncertainty of the measured spectrum; 
 4. response matrix from signal (corresponding to matrix column) to measurement (corresponding to matrix row), M = R*S, column normalized (pdf);
 5. Choice of addional matrix for smoothness, e.g. 2nd derivative matrix.  
+
 Output:
 1. Unfolded spectrum
 2. Additional smearing matrix
@@ -29,17 +30,17 @@ Example input.root output.root 2
 
 * 2: 2nd-order derivative matrix
 * input.root:
-TH1D sig; expected signal
-TH1D Rmeasure; measured spectrum
-TH2D hcov; covariance matrix of measured spectrum uncertainty
-TH2D hresponse; Resposne matrix (X-axis: measured, each row (along Y-axis) should be normalized)
+** TH1D sig; expected signal
+** TH1D Rmeasure; measured spectrum
+** TH2D hcov; covariance matrix of measured spectrum uncertainty
+** TH2D hresponse; Resposne matrix (X-axis: measured, each row (along Y-axis) should be normalized)
 * output.root
-TH1D unf; unfolded spectrum
-TH2D smear; additional smearing matrix, unfolded = smear*r^-1*m
-TH1D wiener; Wiener regularization
-TH1D bias; intrinsic bias, (smear - I)*s/s, s is sig in input.root
-TH1D fracError; fractional uncertainy (corresponding to diagonal elements of unfcov) of the unfolded spectrum
-TH2D unfcov; covariance matrix of the unfolded spectrum uncertainty
+** TH1D unf; unfolded spectrum
+** TH2D smear; additional smearing matrix, unfolded = smear*r^-1*m
+** TH1D wiener; Wiener regularization
+** TH1D bias; intrinsic bias, (smear - I)*s/s, s is sig in input.root
+** TH1D fracError; fractional uncertainy (corresponding to diagonal elements of unfcov) of the unfolded spectrum
+** TH2D unfcov; covariance matrix of the unfolded spectrum uncertainty
 
 Notes:
 1. All input in mathematical format (matrix, vector) for Wiener-SVD. However, tools are provided to convert histogram/matrix to matrix/histogram.  
