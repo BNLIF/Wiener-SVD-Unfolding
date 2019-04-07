@@ -130,6 +130,7 @@ TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrix
     // For addtion of smoothness matrix, e.g. 2nd derivative C
     TMatrixD C0(n, n);
     C0 = Matrix_C(n, C_type);
+
     TMatrixD C = C0;
     C0.Invert();
     TMatrixD C_inv = C0;

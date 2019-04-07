@@ -127,21 +127,26 @@ int main(int argc, char** argv)
     diff->Draw("");
    
     // intrinsic bias (Ac-I)*s_bar formula
-    TH1D* bias = new TH1D("bias","intrinsic bias",n, Nuedges);
+    TH1D* bias = new TH1D("bias","intrinsic bias w.r.t. model",n, Nuedges);
+    TH1D* bias2 = new TH1D("bias2","intrinsic bias2 w.r.t. unfolded result",n, Nuedges);
     TMatrixD unit(n,n);
     unit.UnitMatrix();
     TVectorD intrinsicbias = (AddSmear - unit)*signal;
+    TVectorD intrinsicbias2 = (AddSmear - unit)*unfold;
     for(int i=0; i<n; i++)
     {
         if(signal(i)!=0) intrinsicbias(i) = intrinsicbias(i)/signal(i);
-        else intrinsicbias(i)=1.;
+        else intrinsicbias(i)=0.;
+        if(unfold(i)!=0) intrinsicbias2(i) = intrinsicbias2(i)/unfold(i);
+        else intrinsicbias2(i)=0.;
     }
     V2H(intrinsicbias, bias);
-    bias->Draw("same");
-    bias->SetLineColor(kRed);
+    V2H(intrinsicbias2, bias2);
+    bias2->Draw("same");
+    bias2->SetLineColor(kRed);
     TLegend* lg2 = new TLegend(0.4, 0.5, 0.6, 0.8,"","NDC");
     lg2->AddEntry(diff,"Fractional difference of unfolded and sig model","lf");
-    lg2->AddEntry(bias,"Intrinsic bias","lf");
+    lg2->AddEntry(bias2,"Intrinsic bias","lf");
     lg2->SetBorderSize(0);
     lg2->SetTextSize(0.08);
     lg2->Draw("same");
@@ -155,7 +160,16 @@ int main(int argc, char** argv)
         fracError->SetBinContent(i, TMath::Sqrt(UnfoldCov(i-1, i-1))/unfold(i-1));
         absError->SetBinContent(i, TMath::Sqrt(UnfoldCov(i-1, i-1)));
     }
-     
+    
+    /// MSE
+    TH1D* MSE = new TH1D("MSE", "Mean Square Error: variance+bias^2", n, Nuedges);
+    TH1D* MSE2 = new TH1D("MSE2", "Mean Square Error: variance", n, Nuedges);
+    for(int i=0; i<n; i++)
+    {
+        MSE->SetBinContent(i+1, TMath::Power(intrinsicbias2(i)*unfold(i),2)+UnfoldCov(i,i));
+        MSE2->SetBinContent(i+1, UnfoldCov(i,i));
+    }
+
     // convert matrix/vector to histogram and save
     M2H(AddSmear, smear);
     V2H(WF, wiener);
@@ -166,9 +180,12 @@ int main(int argc, char** argv)
     wiener->Write();
     diff->Write();
     bias->Write();
+    bias2->Write();
     fracError->Write();
     absError->Write();
     unfcov->Write();
+    MSE->Write();
+    MSE2->Write();
     c->Write();
     file->Close();
 
