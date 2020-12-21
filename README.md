@@ -26,14 +26,15 @@ An example of application can be found in Example.C
 Usage:  
 make clean;  
 make;  
-Example input.root output.root 2 
+Example input.root output.root 2 0 
+(2 means: 2nd derivative matrix; 0 means the number of signal events in each bin normalized by signal(i)^0)
 
 * 2: 2nd-order derivative matrix
 * input.root:
 ** TH1D sig; expected signal
 ** TH1D Rmeasure; measured spectrum
 ** TH2D hcov; covariance matrix of measured spectrum uncertainty
-** TH2D hresponse; Resposne matrix (X-axis: measured, each row (along Y-axis) should be normalized)
+** TH2D hresponse; Resposne matrix (X-axis: measured, each row (Y-axis bin) should be normalized)
 * output.root
 ** TH1D unf; unfolded spectrum
 ** TH2D smear; additional smearing matrix, unfolded = smear*r^-1*m
