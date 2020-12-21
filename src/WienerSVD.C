@@ -98,7 +98,7 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
 
 
 
-TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, TMatrixD& AddSmear, TVectorD& WF, TMatrixD& UnfoldCov)
+TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, Float_t Norm_type, TMatrixD& AddSmear, TVectorD& WF, TMatrixD& UnfoldCov)
 {
     Int_t m = Response.GetNrows(); // measure, M
     Int_t n = Response.GetNcols(); // signal, S
@@ -130,6 +130,16 @@ TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrix
     // For addtion of smoothness matrix, e.g. 2nd derivative C
     TMatrixD C0(n, n);
     C0 = Matrix_C(n, C_type);
+    TMatrixD normsig(n, n);
+    for(int i=0; i<n; i++)
+    {
+        for(int j=0; j<n; j++)
+        {
+            normsig(i, j) = 0;
+            if(i==j) normsig(i, j) = 1./TMath::Power(Signal(i), Norm_type);
+        }
+    }
+    C0 = C0*normsig;
 
     TMatrixD C = C0;
     C0.Invert();
@@ -170,8 +180,10 @@ TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrix
             W0(i, j) = 0;
             if(i == j)
             {
+                //W(i, j) = 1./(D(i)*D(i)+2e-7); //S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
+                //WF(i) = D(i)*D(i)*W(i, j);//S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
                 W(i, j) = S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
-                WF(i) = D(i)*D(i)*S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
+                WF(i) = D(i)*D(i)*W(i, j);
                 W0(i, j) = WF(i); 
             }
         }

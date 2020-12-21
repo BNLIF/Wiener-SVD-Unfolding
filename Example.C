@@ -33,11 +33,12 @@ int main(int argc, char** argv)
     string outputfile;
     // Options of  matrix for smoothness, 0 (unitary matrix), 1 (1st derivative matrix), 2 (2nd derivative matrix), else (3rd derivative matrix)
     Int_t C_type; 
+    Float_t Norm_type;
 
-    if( argc !=4 )
+    if( argc !=5 )
     {
         std::cout<<"Usage: "<<std::endl;
-        std::cout<<"exe inputfile.root output.root matrix_C_type"<<std::endl;
+        std::cout<<"exe inputfile.root output.root matrix_C_type norm_type"<<std::endl;
         exit(1);
     }
     else
@@ -45,19 +46,27 @@ int main(int argc, char** argv)
         inputfile = argv[1];
         outputfile = argv[2];
         C_type = atoi(argv[3]);
+        Norm_type = atof(argv[4]);
     }
+    
+    std::cout<<"Derivative matrix type: "<<C_type<<std::endl;
+    std::cout<<"Signal normalization type (power exponent): "<<Norm_type<<std::endl;
 
     TFile* f = new TFile(inputfile.c_str(), "READ");
     
     // Input: signal, measure, response, covariance  
     // true signal spectrum or expected signal spectrum from model, used to construct wiener filter 
-    TH1D *sig = (TH1D*)f->Get("sig"); 
+    TH1D *sig = (TH1D*)f->Get("htrue_signal"); 
+    //TH1D *sig = (TH1D*)f->Get("sig"); 
     // measured spectrum
-    TH1D *mes = (TH1D*)f->Get("Rmeasure");
+    TH1D *mes = (TH1D*)f->Get("hmeas");
+    //TH1D *mes = (TH1D*)f->Get("Rmeasure");
     // response matrix in histogram format
-    TH2D* res = (TH2D*)f->Get("hresponse");
+    TH2D* res = (TH2D*)f->Get("hR");
+    //TH2D* res = (TH2D*)f->Get("hresponse");
     // covariance matrix of measured spectrum in histrogram format
-    TH2D* cov = (TH2D*)f->Get("hcov");
+    TH2D* cov = (TH2D*)f->Get("hcov_tot");
+    //TH2D* cov = (TH2D*)f->Get("hcov");
 
     Int_t n = sig->GetNbinsX();
     Double_t Nuedges[n+1];
@@ -93,7 +102,7 @@ int main(int argc, char** argv)
 
     // Core implementation of Wiener-SVD
     // Input as names read. AddSmear and WF to record the core information in the unfolding.
-    TVectorD unfold = WienerSVD(response, signal, measure, covariance, C_type, AddSmear, WF, UnfoldCov);
+    TVectorD unfold = WienerSVD(response, signal, measure, covariance, C_type, Norm_type, AddSmear, WF, UnfoldCov);
 
     // output and comparison between true/expected signal spectrum with unfolded one
     TFile* file = new TFile(outputfile.c_str(), "RECREATE");
@@ -142,11 +151,11 @@ int main(int argc, char** argv)
     }
     V2H(intrinsicbias, bias);
     V2H(intrinsicbias2, bias2);
-    bias2->Draw("same");
-    bias2->SetLineColor(kRed);
+    bias->Draw("same");
+    bias->SetLineColor(kRed);
     TLegend* lg2 = new TLegend(0.4, 0.5, 0.6, 0.8,"","NDC");
     lg2->AddEntry(diff,"Fractional difference of unfolded and sig model","lf");
-    lg2->AddEntry(bias2,"Intrinsic bias","lf");
+    lg2->AddEntry(bias,"Intrinsic bias","lf");
     lg2->SetBorderSize(0);
     lg2->SetTextSize(0.08);
     lg2->Draw("same");
