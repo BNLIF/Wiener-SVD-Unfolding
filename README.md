@@ -12,7 +12,7 @@ Input:
 1. true/expected signal spectrum (models); 
 2. measured spectrum; 
 3. covariance matrix of the uncertainty of the measured spectrum; 
-4. response matrix from signal (corresponding to matrix column) to measurement (corresponding to matrix row), M = R*S, column normalized (pdf);
+4. response matrix from signal (corresponding to matrix column, TH2D Y-axis) to measurement (corresponding to matrix row, TH2D X-axis), M = R*S; 
 5. Choice of addional matrix for smoothness, e.g. 2nd derivative matrix.  
 
 Output:
@@ -31,10 +31,10 @@ Example input.root output.root 2 0
 
 * 2: 2nd-order derivative matrix
 * input.root:
-** TH1D sig; expected signal
-** TH1D Rmeasure; measured spectrum
-** TH2D hcov; covariance matrix of measured spectrum uncertainty
-** TH2D hresponse; Resposne matrix (X-axis: measured, each row (Y-axis bin) should be normalized)
+** TH1D htrue_signal; a model of true signal
+** TH1D hmeas; measured spectrum
+** TH2D hcov_tot; covariance matrix of measured spectrum uncertainty
+** TH2D hR; resposne matrix (X-axis: measured, Y-axis: true)
 * output.root
 ** TH1D unf; unfolded spectrum
 ** TH2D smear; additional smearing matrix, unfolded = smear*r^-1*m
