@@ -27,7 +27,7 @@ Usage:
 make clean;  
 make;  
 Example input.root output.root 2 0 
-(2 means: 2nd derivative matrix; 0 means the number of signal events in each bin normalized by signal(i)^0)
+(2 means: 2nd derivative matrix; 0 means the number of measured events in each bin normalized by m(i)^0)
 
 * 2: 2nd-order derivative matrix
 * input.root:
