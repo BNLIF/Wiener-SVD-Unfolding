@@ -49,8 +49,8 @@ Notes:
 3. Current version can handle non-square matrix (only number of rows greater or equal to number of columns is inversible/solvable).
 4. Be careful about histogram x/y-axis meaning after coversion. Two options: hist(i+1, j+1) = matrix(i, j) or hist(i+1, j+1)=matrix(j, i). No units considered in the mutual coversion, to be customized by users in the definiation of histograms.
 5. The response matrix in general should include truth event efficiency. Two ways to include the efficiency:
-  1) normalize each column j (corresponding to truth bin j) of the response matrix and then apply efficiency from truth bin j to each element of this column bin.
-  2) Construct response matrix R_ij = (number of reco events in bin i from true events in bin j)/(number of true events in bin j)
+  5.1) normalize each column j (corresponding to truth bin j) of the response matrix and then apply efficiency from truth bin j to each element of this column bin.
+  5.2) Construct response matrix R_ij = (number of reco events in bin i from true events in bin j)/(number of true events in bin j)
 Other constant factors e.g. flux, target mass, etc. count on the users' discretion. Remember this equation M = R\*S must hold unless you have other purposes or procedures.
 6. Output includes the addtional smearing matrix and wiener filter elements after unfolding. These are all info we need to know for this method. 
 
