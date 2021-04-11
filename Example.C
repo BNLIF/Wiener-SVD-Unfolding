@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     // Options of  matrix for smoothness, 0 (unitary matrix), 1 (1st derivative matrix), 2 (2nd derivative matrix), else (3rd derivative matrix)
     Int_t C_type; 
     Float_t Norm_type;
-    Int_t flag_WienerFilter = 1;
+    Float_t flag_WienerFilter = 1.0;
 
     if( argc <5 )
     {
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         outputfile = argv[2];
         C_type = atoi(argv[3]);
         Norm_type = atof(argv[4]);
-        if(argc==6) flag_WienerFilter = atoi(argv[5]);
+        if(argc==6) flag_WienerFilter = atof(argv[5]);
     }
     
     std::cout<<"Derivative matrix type: "<<C_type<<std::endl;

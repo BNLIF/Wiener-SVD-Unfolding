@@ -98,7 +98,7 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
 
 
 
-TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, Float_t Norm_type, TMatrixD& AddSmear, TVectorD& WF, TMatrixD& UnfoldCov, Int_t flag_WienerFilter)
+TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrixD Covariance, Int_t C_type, Float_t Norm_type, TMatrixD& AddSmear, TVectorD& WF, TMatrixD& UnfoldCov, Float_t flag_WienerFilter)
 {
     Int_t m = Response.GetNrows(); // measure, M
     Int_t n = Response.GetNcols(); // signal, S
@@ -180,10 +180,10 @@ TVectorD WienerSVD(TMatrixD Response, TVectorD Signal, TVectorD Measure, TMatrix
             W0(i, j) = 0;
             if(i == j)
             {
-                if(flag_WienerFilter){
+                if(flag_WienerFilter!=0){
                 //W(i, j) = 1./(D(i)*D(i)+2e-7); //S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
                 //WF(i) = D(i)*D(i)*W(i, j);//S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
-                W(i, j) = S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 );
+                W(i, j) = flag_WienerFilter*S(i)*S(i) / ( D(i)*D(i)*S(i)*S(i)+1 ); // flag_WienerFilter -> normalization
                 WF(i) = D(i)*D(i)*W(i, j);
                 W0(i, j) = WF(i); 
                 }
